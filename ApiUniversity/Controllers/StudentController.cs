@@ -17,15 +17,15 @@ public class StudentController : ControllerBase
 
     // GET: api/student
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Student>>> GetStudents()
+    public async Task<ActionResult<IEnumerable<StudentDTO>>> GetStudents()
     {
         
-        var students = _context.Students;
+        var students = _context.Students.Select(x => new StudentDTO(x));;
         return await students.ToListAsync();
     }
 // GET: api/student/2
     [HttpGet("{id}")]
-    public async Task<ActionResult<Student>> GetStudent(int id)
+    public async Task<ActionResult<StudentDTO>> GetStudent(int id)
     {
         
         var student = await _context.Students.SingleOrDefaultAsync(t => t.Id == id);
@@ -33,26 +33,31 @@ public class StudentController : ControllerBase
         if (student == null)
             return NotFound();
 
-        return student;
+        return new StudentDTO(student);
     }
 
     // POST: api/student
     [HttpPost]
-    public async Task<ActionResult<Student>> PostStudent(Student student)
+    public async Task<ActionResult<Student>> PostStudent(StudentDTO studentDTO)
     {
+        Student student = new(studentDTO);
+        
         _context.Students.Add(student);
         await _context.SaveChangesAsync();
 
-        return CreatedAtAction(nameof(GetStudent), new { id = student.Id }, student);
+        return CreatedAtAction(nameof(GetStudent), new { id = student.Id }, new StudentDTO(student));
     }
 
     // PUT: api/student/2
     [HttpPut("{id}")]
-    public async Task<IActionResult> PutStudent(int id, Student student)
+    public async Task<IActionResult> PutStudent(int id, StudentDTO studentDTO)
     {
-        if (id != student.Id)
+        if (id != studentDTO.Id)
+        {
             return BadRequest();
+        }
 
+        Student student = new(studentDTO);
         _context.Entry(student).State = EntityState.Modified;
 
         try
