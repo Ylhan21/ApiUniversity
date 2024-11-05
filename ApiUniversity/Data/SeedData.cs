@@ -116,4 +116,38 @@ public static class SeedData
         // Commit changes into DB
         context.SaveChanges();
     }
+    public static void InitMail()
+    {
+        using var context = new UniversityContext();
+
+        // Vérifier si les étudiants existent déjà
+        if (!context.Students.Any())
+        {
+           
+        }
+        else
+        {
+            // Récupérer les étudiants
+            var students = context.Students.ToList();
+            
+            var emailMapping = new Dictionary<string, string>
+            {
+                { "Carson", "alexander.carson@example.com" },
+                { "Alonso", "meredith.alonso@example.com" },
+                { "Anand", "arturo.anand@example.com" },
+                { "Barzdukas", "gytis.barzdukas@example.com" }
+            };
+
+            foreach (var student in students)
+            {
+                if (string.IsNullOrEmpty(student.Email) && emailMapping.ContainsKey(student.LastName!))
+                {
+                    student.Email = emailMapping[student.LastName!];
+                }
+            }
+
+            
+            context.SaveChanges();
+        }
+    }
 }
