@@ -38,7 +38,7 @@ public class StudentController : ControllerBase
 
     // POST: api/student
     [HttpPost]
-    public async Task<ActionResult<Student>> PostStudent(StudentDTO studentDTO)
+    public async Task<ActionResult<StudentDTO>> PostStudent(StudentDTO studentDTO)
     {
         Student student = new(studentDTO);
         

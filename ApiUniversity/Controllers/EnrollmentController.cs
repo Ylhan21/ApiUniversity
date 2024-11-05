@@ -38,14 +38,14 @@ public class EnrollmentController : ControllerBase
     }
     // POST: api/enrollment
     [HttpPost]
-    public async Task<ActionResult<Enrollment>> PostEnrollment(EnrollmentDTO enrollmentDTO)
+    public async Task<ActionResult<DetailedEnrollmentDTO>> PostEnrollment(EnrollmentDTO enrollmentDTO)
     {
         Enrollment enrollment = new(enrollmentDTO);
         
         _context.Enrollments.Add(enrollment);
         await _context.SaveChangesAsync();
 
-        return CreatedAtAction(nameof(GetEnrollment), new { id = enrollment.Id }, new EnrollmentDTO(enrollment));
+        return CreatedAtAction(nameof(GetEnrollment), new { id = enrollment.Id }, new DetailedEnrollmentDTO(enrollment));
     }
 
 }

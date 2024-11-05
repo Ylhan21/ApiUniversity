@@ -42,7 +42,7 @@ public class CourseController : ControllerBase
 
     // POST: api/course
     [HttpPost]
-    public async Task<ActionResult<Course>> PostCourse(CourseDTO courseDTO)
+    public async Task<ActionResult<CourseDTO>> PostCourse(CourseDTO courseDTO)
     {
         Course course = new(courseDTO);
 
