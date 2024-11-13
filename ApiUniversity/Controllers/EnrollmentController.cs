@@ -18,7 +18,7 @@ public class EnrollmentController : ControllerBase
     public async Task<ActionResult<IEnumerable<DetailedEnrollmentDTO>>> GetEnrollment()
     {
         // Get courses and related lists
-        var enrollments = _context.Enrollments.Include(x=>x.Course).Include(x=>x.Student).Select(x => new DetailedEnrollmentDTO(x));;
+        var enrollments = _context.Enrollments.Include(x=>x.Course).ThenInclude(x=>x!.Department).ThenInclude(x=>x!.Administrator).Include(x=>x.Student).Select(x => new DetailedEnrollmentDTO(x));;
         return await enrollments.ToListAsync();
     }
 
@@ -38,12 +38,16 @@ public class EnrollmentController : ControllerBase
     }
     // POST: api/enrollment
     [HttpPost]
+   [HttpPost]
     public async Task<ActionResult<DetailedEnrollmentDTO>> PostEnrollment(EnrollmentDTO enrollmentDTO)
     {
         Enrollment enrollment = new(enrollmentDTO);
-        
+
         _context.Enrollments.Add(enrollment);
         await _context.SaveChangesAsync();
+
+        enrollment.Student = await _context.Students.FirstAsync(i => i.Id == enrollmentDTO.StudentId);
+        enrollment.Course = await _context.Courses.FirstAsync(i => i.Id == enrollmentDTO.CourseId);
 
         return CreatedAtAction(nameof(GetEnrollment), new { id = enrollment.Id }, new DetailedEnrollmentDTO(enrollment));
     }

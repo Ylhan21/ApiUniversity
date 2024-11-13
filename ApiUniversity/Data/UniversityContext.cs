@@ -13,7 +13,7 @@ public class UniversityContext : DbContext
   public UniversityContext()
   {
     // Path to SQLite database file
-    DbPath = "EFUniversity.db";
+    DbPath = "ApiUniversity.db";
   }
 
 

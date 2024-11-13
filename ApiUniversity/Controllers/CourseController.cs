@@ -19,7 +19,7 @@ public class CourseController : ControllerBase
     public async Task<ActionResult<IEnumerable<CourseDTO>>> GetCourses()
     {
         // Get courses and related lists
-        var courses = _context.Courses.Select(x => new CourseDTO(x));
+        var courses = _context.Courses.Include(c=>c.Department).ThenInclude(x => x!.Administrator).Include(c=>c.Instructors).Select(x => new CourseDTO(x));;
         return await courses.ToListAsync();
     }
 
@@ -30,7 +30,7 @@ public class CourseController : ControllerBase
         // Find course and related list
         // SingleAsync() throws an exception if no course is found (which is possible, depending on id)
         // SingleOrDefaultAsync() is a safer choice here
-        var course = await _context.Courses.SingleOrDefaultAsync(t => t.Id == id);
+        var course = await _context.Courses.Include(c=>c.Department).ThenInclude(x => x!.Administrator).Include(c=>c.Instructors).SingleOrDefaultAsync(t => t.Id == id);
 
         if (course == null)
         {
@@ -48,6 +48,8 @@ public class CourseController : ControllerBase
 
         _context.Courses.Add(course);
         await _context.SaveChangesAsync();
+         
+        course = await _context.Courses.Include(c => c.Department).ThenInclude(x => x!.Administrator).Include(c=>c.Instructors).SingleAsync(c => c.Id == course.Id);
 
         return CreatedAtAction(nameof(GetCourse), new { id = course.Id }, new CourseDTO(course));
     }
